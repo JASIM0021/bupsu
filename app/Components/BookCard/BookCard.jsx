@@ -5,14 +5,15 @@ import ImageConstant from '../../Constant/ImageConstant';
 import GolbalStyle from '../../Style';
 import { useTheme } from 'react-native-paper';
 import { responsiveHeight, responsiveWidth } from '../../themes';
-
-const BookCard = ({ title, subTitle, bg, onPress }) => {
+import Hstack from '../Hstack/Hstack';
+import Feather from 'react-native-vector-icons/Feather';
+const BookCard = ({ title, subTitle, bg, onPress, number }) => {
   const theme = useTheme();
   return (
     <View
       style={{
         backgroundColor: bg ? bg : theme.colors.primary,
-        height: responsiveHeight + 200,
+        height: 'auto',
         width: responsiveWidth + 200,
         borderRadius: 20,
         padding: 16,
@@ -47,8 +48,22 @@ const BookCard = ({ title, subTitle, bg, onPress }) => {
                 }
           }
         >
-          <Image source={ImageConstant.btnBookNow} />
+          {number ? (
+            <>
+              <Hstack gap={6}>
+                <Feather
+                  name="phone-call"
+                  size={22}
+                  color={theme.colors.secondary}
+                />
+                <CustomText text="Call Now" color="white" bold="bold" />
+              </Hstack>
+            </>
+          ) : (
+            <Image source={ImageConstant.btnBookNow} />
+          )}
         </TouchableOpacity>
+
         <Image
           source={ImageConstant.doctor}
           resizeMode="cover"

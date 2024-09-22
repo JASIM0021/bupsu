@@ -52,6 +52,7 @@ const CustomText = ({
           letterSpacing: spacing || 0,
           fontWeight: bold,
         }}
+   
         {...rest}
         onPress={() => (onPress ? onPress() : {})}
       >

@@ -92,6 +92,7 @@ const GolbalStyle = StyleSheet.create({
     paddingHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: lightTheme.colors.primary,
   },
   rowCenter: {
     display: 'flex',

@@ -7,6 +7,7 @@ import TabLayout from '../screens/Home/TabLayout';
 import HomeTab from '../screens/Home/Tabs/Home/HomeTab';
 import SearchScreen from '../screens/SearchScreen/SearchScreen';
 import Splash from '../screens/Splash/Splash';
+import UploadSuccess from '../screens/Upload/SuccessUpload';
 
 export const SCREEN_NAME = {
   Splash: 'Splash',
@@ -21,6 +22,7 @@ export const SCREEN_NAME = {
   Search: 'Search',
   BloodGroupTest: 'BloodGroupTest',
   ERecipt: 'ERecipt',
+  UploadSuccess: 'UploadSuccess',
 };
 
 export const SCREEN_COMPONENT = {
@@ -32,4 +34,5 @@ export const SCREEN_COMPONENT = {
   Search: SearchScreen,
   BloodGroupTest: BloodGroupTest,
   ERecipt: ERecipt,
+  UploadSuccess: UploadSuccess,
 };

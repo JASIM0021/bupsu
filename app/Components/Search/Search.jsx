@@ -36,6 +36,7 @@ const Search = ({ isClick = true, onTextChange }) => {
   const styles = StyleSheet.create({
     container: {
       paddingVertical: 10,
+      width: '100%',
     },
     searchContainer: {
       flexDirection: 'row',
@@ -91,12 +92,12 @@ const Search = ({ isClick = true, onTextChange }) => {
               : {
                   ...GlobalStyle.txtRounded,
                   borderRadius: 16,
-                  borderTopLeftRadius: 16,
-                  borderTopRightRadius: 16,
+                  borderTopLeftRadius: 8,
+                  borderTopRightRadius: 8,
                 },
             styles.input,
           ]}
-          placeholder="Search Test"
+          placeholder="Search Test, Organization or Diagnosis"
           placeholderTextColor={theme.colors.primary}
           onChangeText={text => {
             setSearchText(text);

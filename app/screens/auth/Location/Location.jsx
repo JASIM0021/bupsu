@@ -14,6 +14,8 @@ import {
   screenWidth,
 } from '../../../themes';
 import useNavigationHelper from '../../helper/NavigationHelper';
+import { SCREEN_NAME } from '../../../Constant';
+import { ShowAlertMsg } from '../../../helper/ShowAlert';
 
 const LocationScreen = () => {
   const theme = useTheme();
@@ -30,14 +32,17 @@ const LocationScreen = () => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const navigation = useNavigationHelper()
+  const navigation = useNavigationHelper();
 
   const handleLocationPermission = async () => {
     // Request location permission
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       setErrorMsg('Permission to access location was denied');
-      Alert.alert('Permission Denied', 'Enable location permission to continue.');
+      Alert.alert(
+        'Permission Denied',
+        'Enable location permission to continue.',
+      );
       return;
     }
 
@@ -49,9 +54,11 @@ const LocationScreen = () => {
       // Alert.alert('Location Captured', `Latitude: ${currentLocation.coords.latitude}, Longitude: ${currentLocation.coords.longitude}`);
       console.log('Current Location:', currentLocation);
       navigation.push({
-        screen: 'HomeTab',
-        data:{}
-      })
+        screen: SCREEN_NAME.Location,
+        data: {},
+      });
+    } else {
+      ShowAlertMsg.showError('Location not found');
     }
   };
 
@@ -60,7 +67,12 @@ const LocationScreen = () => {
       <Header isBack={true} title="Verify OTP" />
       <Divider />
       <View style={styles.container}>
-        <View style={[GolbalStyle.column, { justifyContent: 'center', alignItems: 'center' }]}>
+        <View
+          style={[
+            GolbalStyle.column,
+            { justifyContent: 'center', alignItems: 'center' },
+          ]}
+        >
           <Image
             style={{
               height: responsiveHeight * 3,
@@ -70,8 +82,18 @@ const LocationScreen = () => {
             resizeMode="contain"
           />
 
-          <CustomText text="Location permission not enabled" bold="bold" size="md" textAlign="center" />
-          <CustomText text="Give us permission to share your location so we can enhance your booking." bold="1200" size="sm" textAlign="center" />
+          <CustomText
+            text="Location permission not enabled"
+            bold="bold"
+            size="md"
+            textAlign="center"
+          />
+          <CustomText
+            text="Give us permission to share your location so we can enhance your booking."
+            bold="1200"
+            size="sm"
+            textAlign="center"
+          />
         </View>
 
         <View style={[GolbalStyle.column_center, { paddingBottom: 20 }]}>

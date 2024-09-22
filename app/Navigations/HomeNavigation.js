@@ -21,6 +21,10 @@ const screen = [
     name: SCREEN_NAME.ERecipt,
     component: SCREEN_COMPONENT.ERecipt,
   },
+  {
+    name: SCREEN_NAME.UploadSuccess,
+    component: SCREEN_COMPONENT.UploadSuccess,
+  },
 ];
 
 const HomeNavigation = ({ route }) => {

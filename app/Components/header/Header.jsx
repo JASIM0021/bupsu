@@ -1,4 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Linking,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
 import { Appbar, Divider, TouchableRipple, useTheme } from 'react-native-paper';
 import CustomText from '../Text';
@@ -22,6 +29,19 @@ const Header = ({
   const navigate = useNavigationHelper();
   const onBackPress = () => {
     navigate.back();
+  };
+
+  const onPhoneCall = async () => {
+    const phoneNumber = '+91 81161 82108';
+    if (Platform.OS === 'android') {
+      Linking.openURL(`tel:${phoneNumber}`);
+      return;
+    }
+
+    if (Platform.OS === 'ios') {
+      Linking.openURL(`telprompt:${phoneNumber}`);
+      return;
+    }
   };
 
   return (
@@ -53,7 +73,7 @@ const Header = ({
           <View style={GolbalStyle.row}>
             <Image source={ImageConstant.logo} style={GolbalStyle.logo} />
             <CustomText
-              text={'BUPSU'}
+              text={'BUPSE'}
               bold={'bold'}
               spacing={1.5}
               size="md"
@@ -69,7 +89,7 @@ const Header = ({
             </TouchableRipple>
           )}
           {isPhone && (
-            <TouchableRipple>
+            <TouchableRipple onPress={onPhoneCall}>
               <Image source={ImageConstant.call} />
             </TouchableRipple>
           )}

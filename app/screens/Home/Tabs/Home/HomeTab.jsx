@@ -9,6 +9,9 @@ import {
   View,
   Animated,
   PanResponder,
+  ScrollView,
+  Linking,
+  Platform,
 } from 'react-native';
 import Header from '../../../../Components/header/Header';
 import Search from '../../../../Components/Search/Search';
@@ -138,10 +141,50 @@ const HomeTab = () => {
 
   const navigation = useNavigationHelper();
 
+  const serviceArr = [
+    {
+      name: 'Book a Test and Diagnostic Appointment',
+      subTitle: 'Blood test, X-ray, MRI, CT scan, etc.',
+      onPress: () => {
+        navigation.push({
+          screen: SCREEN_NAME.BloodGroupTest,
+          data: {},
+        });
+      },
+    },
+    {
+      name: 'Book  Home Care Health Service',
+      subTitle: 'Blood test, ECG , etc.',
+      onPress: () => {
+        navigation.push({
+          screen: SCREEN_NAME.BloodGroupTest,
+          data: {},
+        });
+      },
+    },
+    {
+      name: 'E-Health Consultancy',
+      subTitle:
+        'Consult your issue directly with an expert in this service \n Sasthosathi service is also avilable ',
+      number: '+91 81161 82108',
+      onPress: () => {
+        const phoneNumber = '+91 81161 82108';
+        if (Platform.OS === 'android') {
+          Linking.openURL(`tel:${phoneNumber}`);
+          return;
+        }
+
+        if (Platform.OS === 'ios') {
+          Linking.openURL(`telprompt:${phoneNumber}`);
+          return;
+        }
+      },
+    },
+  ];
+
   return (
     <View style={styles.container}>
       <Header isBack={false} isShop={true} isPhone={true} />
-
       <View style={{ paddingHorizontal: 16 }}>
         <View style={[GolbalStyle.row]}>
           <CustomText
@@ -163,9 +206,13 @@ const HomeTab = () => {
           </TouchableOpacity>
         </View>
 
-        <Search isClick={true} />
+        {/* <Search isClick={true} /> */}
 
-        <ScrollViewHelper>
+        <ScrollView
+          contentContainerStyle={{
+            height: '100%',
+          }}
+        >
           {/* Image Swiper */}
           <View style={{ height: responsiveHeight * 2 }}>
             <Swiper
@@ -197,32 +244,29 @@ const HomeTab = () => {
           {/* CARD */}
           <View style={[GolbalStyle.mtSM]}>
             <FlatList
+              showsHorizontalScrollIndicator={false}
               contentContainerStyle={{
                 columnGap: 20,
+                height: '100%',
+                // flex: 1,
               }}
-              data={[1, 2]}
+              data={serviceArr}
               horizontal={true}
               renderItem={({ item }) => {
                 return (
                   <BookCard
-                    onPress={() => {
-                      console.log('first');
-                      navigation.push({
-                        screen: SCREEN_NAME.BloodGroupTest,
-                        data: {},
-                      });
-                    }}
-                    title={'Book a test and diagnostic appointment.'}
-                    subTitle={'Blood test, X-ray, MRI, CT scan Etc...'}
+                    onPress={item.onPress}
+                    title={item.name}
+                    subTitle={item.subTitle}
+                    number={item.number}
                   />
                 );
               }}
             />
           </View>
-        </ScrollViewHelper>
+        </ScrollView>
       </View>
-
-      {/* View cart section */}
+      {/* View cart section
       <Animated.View
         {...panResponder.panHandlers}
         style={[
@@ -254,8 +298,7 @@ const HomeTab = () => {
         >
           <CustomText text="View Cart" bold="bold" color="white" />
         </TouchableOpacity>
-      </Animated.View>
-
+      </Animated.View> */}
       <ActionSheet ref={actionSheetRef}>
         <View style={[GolbalStyle.column, { height: responsiveHeight * 4 }]}>
           <AutocompleteDistricts />
