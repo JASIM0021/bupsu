@@ -30,10 +30,10 @@ import Profile from '../Profile/Profile';
 const TabLayout = ({ navigation }) => {
   const route = useRoute();
 
-  let _index = route?.params?.data?.index;
-
-  console.log('_index', _index);
-  const [index, setIndex] = React.useState(_index ? _index : 0);
+  const initialIndex = route?.params?.data?.index ?? 0;
+  console.log('_index', initialIndex);
+  const [index, setIndex] = React.useState(initialIndex);
+  console.log('index', index);
   const [routes] = React.useState([
     {
       key: 'home',

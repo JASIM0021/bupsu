@@ -143,8 +143,18 @@ const HomeTab = () => {
 
   const serviceArr = [
     {
+      name: 'Book Directly Using Prescription',
+      subTitle: 'Directly book by uploading your prescription',
+      onPress: () => {
+        navigation.push({
+          screen: 'PatientDetails',
+          data: {},
+        });
+      },
+    },
+    {
       name: 'Book a Test and Diagnostic Appointment',
-      subTitle: 'Blood test, X-ray, MRI, CT scan, etc.',
+      subTitle: 'Blood test, X-ray, MRI, CT scan, and more',
       onPress: () => {
         navigation.push({
           screen: SCREEN_NAME.BloodGroupTest,
@@ -153,8 +163,8 @@ const HomeTab = () => {
       },
     },
     {
-      name: 'Book  Home Care Health Service',
-      subTitle: 'Blood test, ECG , etc.',
+      name: 'Book Home Care Health Service',
+      subTitle: 'Blood test, ECG, and other home services',
       onPress: () => {
         navigation.push({
           screen: SCREEN_NAME.BloodGroupTest,
@@ -165,7 +175,7 @@ const HomeTab = () => {
     {
       name: 'E-Health Consultancy',
       subTitle:
-        'Consult your issue directly with an expert in this service \n Sasthosathi service is also avilable ',
+        'Consult directly with an expert for your health issues.\nSasthosathi service is also available.',
       number: '+91 81161 82108',
       onPress: () => {
         const phoneNumber = '+91 81161 82108';

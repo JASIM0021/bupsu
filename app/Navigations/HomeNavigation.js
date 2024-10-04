@@ -25,6 +25,18 @@ const screen = [
     name: SCREEN_NAME.UploadSuccess,
     component: SCREEN_COMPONENT.UploadSuccess,
   },
+  {
+    name: SCREEN_NAME.PatientDetails,
+    component: SCREEN_COMPONENT.PatientDetails,
+  },
+  {
+    name: SCREEN_NAME.Payment,
+    component: SCREEN_COMPONENT.Payment,
+  },
+  {
+    name: SCREEN_NAME.OrderSuccess,
+    component: SCREEN_COMPONENT.OrderSuccess,
+  },
 ];
 
 const HomeNavigation = ({ route }) => {

@@ -20,6 +20,7 @@ const Search = ({ isClick = true, onTextChange }) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearchText(searchText);
+      onTextChange(searchText);
     }, 2000);
 
     return () => {
@@ -73,9 +74,7 @@ const Search = ({ isClick = true, onTextChange }) => {
           style={styles.icon}
         />
         <TextInput
-          onTextInput={text =>
-            onTextChange ? onTextChange(text) : searchText(text)
-          }
+          onTextInput={text => setSearchText(text)}
           onPressIn={
             isClick
               ? () => {
