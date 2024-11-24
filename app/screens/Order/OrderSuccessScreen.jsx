@@ -4,11 +4,14 @@ import { useTheme, Text, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useNavigationHelper from '../helper/NavigationHelper';
+import { useDispatch } from 'react-redux';
+import { saveSelectedTest } from '../../features/slice/GlobalSlice';
 
 const OrderSuccessScreen = () => {
   const theme = useTheme();
   const navigation = useNavigationHelper();
 
+  const dispatch = useDispatch();
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -60,6 +63,7 @@ const OrderSuccessScreen = () => {
   });
 
   const handleViewOrder = () => {
+    dispatch(saveSelectedTest({}));
     navigation.push({
       screen: 'HomeTab',
       data: { index: 1 },
@@ -67,6 +71,7 @@ const OrderSuccessScreen = () => {
   };
 
   const handleBackToHome = () => {
+    dispatch(saveSelectedTest({}));
     navigation.push({
       screen: 'HomeTab',
     });

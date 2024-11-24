@@ -9,6 +9,13 @@ const appointmentSlice = globalApiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    createDirectAppointment: builder.mutation({
+      query: data => ({
+        url: 'appointments/create-direct-appointment',
+        method: 'POST',
+        body: data,
+      }),
+    }),
 
     //appointments/my-appointments
 
@@ -22,5 +29,8 @@ const appointmentSlice = globalApiSlice.injectEndpoints({
   }),
 });
 
-export const { useCreateAppointmentMutation, useGetMyAppointmentQuery } =
-  appointmentSlice;
+export const {
+  useCreateAppointmentMutation,
+  useGetMyAppointmentQuery,
+  useCreateDirectAppointmentMutation,
+} = appointmentSlice;

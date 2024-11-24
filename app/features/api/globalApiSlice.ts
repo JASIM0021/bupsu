@@ -6,7 +6,7 @@ import AsyncStorage from '../../helper/AsyncStorage';
 // let url=
 let url = {
   // http://192.168.154.158
-  url_dev: 'http://192.168.1.6:5001/api/v1/',
+  url_dev: 'http://192.168.15.101:5001/api/v1/',
   url_prod: 'https://bupse-medical-service-api.vercel.app/api/v1/',
 };
 let API_URL = url['url_dev'];

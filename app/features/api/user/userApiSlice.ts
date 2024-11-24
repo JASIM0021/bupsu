@@ -25,10 +25,24 @@ const userInfo = globalApiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    updatePatientProfile: builder.mutation({
+      query: data => {
+        console.log('Updating patient profile with data:', data);
+
+        return {
+          url: `patients/${data?.id}`,
+          method: 'POST',
+          body: data?.formData,
+        };
+      },
+    }),
+
+    //patients/6740c11e4f8a960793ff6ce3
   }),
 });
 export const {
   useCreateUserMutation,
   useLoginUserMutation,
   useGetProfileInfoQuery,
+  useUpdatePatientProfileMutation,
 } = userInfo;

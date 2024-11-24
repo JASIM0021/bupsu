@@ -191,7 +191,7 @@ const PatientDetails = () => {
       dispatch(savePatientDetails(patientDetails));
       navigation.push({
         screen: 'Payment',
-        data: {},
+        data: prescription,
       });
       // Navigate to the next screen or process the booking
     }
