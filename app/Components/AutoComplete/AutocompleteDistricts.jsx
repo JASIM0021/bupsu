@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, FlatList, StyleSheet, TextInput } from 'react-native';
-import { List } from 'react-native-paper';
+import { List, useTheme } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import { saveLocation } from '../../features/slice/GlobalSlice';
+import { useGetAllAddressQuery } from '../../features/api/address/address.api';
+import CustomText from '../Text';
 const districts = {
   WestBengal: [
     { district: 'Alipurduar', latitude: 26.4871, longitude: 89.5271 },
@@ -33,18 +35,30 @@ const districts = {
 
 const AutocompleteDistricts = () => {
   const dispatch = useDispatch();
+
+  const { data, isLoading, isError, error } = useGetAllAddressQuery();
+
   const [query, setQuery] = useState('');
-  const [filteredDistricts, setFilteredDistricts] = useState([]);
+  const [filteredDistricts, setFilteredDistricts] = useState(
+    data?.data ? data?.data : [],
+  );
 
   const filterDistricts = input => {
-    const filtered = districts.WestBengal.filter(item =>
-      item.district.toLowerCase().includes(input.toLowerCase()),
+    const filtered = data?.data?.filter(item =>
+      item?.name?.toLowerCase().includes(input.toLowerCase()),
     );
     setFilteredDistricts(filtered);
   };
 
+  const theme = useTheme();
   return (
-    <View style={{ padding: 16 }}>
+    <View style={{ padding: 16, rowGap: 10 }}>
+      <CustomText
+        text="Please select your Location"
+        textAlign="center"
+        bold="bold"
+        color={theme.colors.primary}
+      />
       <TextInput
         placeholder="Search District"
         value={query}
@@ -62,18 +76,18 @@ const AutocompleteDistricts = () => {
           },
         }}
       />
-      {filteredDistricts.length > 0 && (
+      {filteredDistricts?.length > 0 && (
         <FlatList
-          data={filteredDistricts}
-          keyExtractor={item => item.district}
+          data={data?.data}
+          keyExtractor={item => item?.name}
           renderItem={({ item }) => (
             <List.Item
-              title={item.district}
-              description={`Latitude: ${item.latitude}, Longitude: ${item.longitude}`}
+              title={item?.name}
+              // description={`Latitude: ${item.latitude}, Longitude: ${item.longitude}`}
               onPress={() => {
                 dispatch(saveLocation(item));
-                setQuery(item.district);
-                setFilteredDistricts([]);
+                setQuery(item.name);
+                setFilteredDistricts([...data?.data]);
               }}
             />
           )}

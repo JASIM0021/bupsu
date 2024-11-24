@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -10,8 +10,7 @@ import {
   Pressable,
 } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Carousel from 'react-native-snap-carousel';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -22,6 +21,10 @@ import { SCREEN_NAME } from '../../Constant';
 import ImageConstant from '../../Constant/ImageConstant';
 import { responsiveHeight, responsiveWidth, screenWidth } from '../../themes';
 import useNavigationHelper from '../helper/NavigationHelper';
+import { useGetTestbyQueryQuery } from '../../features/api/service/medecalService';
+import { useDispatch, useSelector } from 'react-redux';
+import Loader from '../../Components/Loader/Loader';
+import { saveSelectedTest } from '../../features/slice/GlobalSlice';
 
 const { width } = Dimensions.get('window');
 
@@ -30,7 +33,25 @@ const BloodGroupTest = () => {
   const [search, setSearch] = useState('');
   const carouselRef = useRef(null);
   const navigation = useNavigationHelper();
+  const { location } = useSelector(state => state.globalReducer);
+  const [queryParams, setQueryParam] = useState([
+    {
+      name: 'coverAddress',
+      value: location?.name,
+    },
+    {
+      name: 'searchTerm',
+      value: search,
+    },
+  ]);
 
+  const {
+    data: testData,
+    isLoading,
+    refetch,
+  } = useGetTestbyQueryQuery({ queryParams });
+
+  const dispatch = useDispatch();
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -132,70 +153,62 @@ const BloodGroupTest = () => {
     </View>
   );
 
-  const listData = [
-    {
-      orgName: 'USG whole abdomen',
-      description: 'Comprehensive abdominal ultrasound',
-      price: 900,
-      discountedPrice: 800,
-      imageUrl: 'https://via.placeholder.com/100x100.png?text=Test+1',
-    },
-    {
-      orgName: 'USG upper abdomen',
-      description: 'Upper abdominal ultrasound',
-      price: 800,
-      discountedPrice: 700,
-      imageUrl: 'https://via.placeholder.com/100x100.png?text=Test+2',
-    },
-    {
-      orgName: 'MRI Brain',
-      description: 'Detailed brain imaging',
-      price: 1500,
-      discountedPrice: 1200,
-      imageUrl: 'https://via.placeholder.com/100x100.png?text=Test+3',
-    },
-    {
-      orgName: 'CT Scan Brain',
-      description: 'Quick brain imaging',
-      price: 2000,
-      discountedPrice: 1600,
-      imageUrl: 'https://via.placeholder.com/100x100.png?text=Test+4',
-    },
-  ];
-
-  const handleBook = () => {
+  const handleBook = item => {
+    dispatch(saveSelectedTest(item));
     navigation.push({
-      screen: 'PatientDetails',
+      screen: SCREEN_NAME.PatientDetails,
       data: {},
     });
   };
 
   const renderTestItem = ({ item }) => (
-    <Pressable style={styles.testItem} onPressIn={handleBook}>
+    <Pressable style={styles.testItem} onPressIn={() => handleBook(item)}>
       <Image
         source={ImageConstant.demo_img}
         style={styles.testImage}
         resizeMode="cover"
       />
       <View style={styles.testInfo}>
-        <CustomText text={item.orgName} style={styles.testName} />
-        <CustomText text={item.description} style={styles.testDescription} />
+        <CustomText text={item?.organizationName} style={styles.testName} />
+        <CustomText
+          text={item?.organizationAddress}
+          style={styles.testDescription}
+        />
         <View style={styles.priceContainer}>
           <CustomText
-            text={`₹ ${item.discountedPrice}`}
+            text={`₹ ${
+              item?.discountedPrice ? item?.discountedPrice : item?.mrp
+            }`}
             style={styles.discountedPrice}
           />
-          <CustomText text={`₹ ${item.price}`} style={styles.originalPrice} />
+          <CustomText text={`₹ ${item?.mrp}`} style={styles.originalPrice} />
         </View>
-        <TouchableOpacity style={styles.bookButton} onPress={handleBook}>
+        <TouchableOpacity
+          style={styles.bookButton}
+          onPress={() => handleBook(item)}
+        >
           <CustomText text="Book Now" style={styles.bookButtonText} />
         </TouchableOpacity>
       </View>
     </Pressable>
   );
 
+  useEffect(() => {
+    setQueryParam([
+      {
+        name: 'coverAddress',
+        value: location?.name,
+      },
+      {
+        name: 'searchTerm',
+        value: search,
+      },
+    ]);
+  }, [search]);
+
   return (
     <View style={styles.container}>
+      <Loader isLoading={isLoading} />
       <Header isBack={true} title="Blood Group Test" />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.carouselContainer}>
@@ -211,18 +224,12 @@ const BloodGroupTest = () => {
           />
         </View>
 
-        <Search
-          isClick={false}
-          onTextChange={text => {
-            setSearch(text);
-            console.log('text', text);
-          }}
-        />
+        <Search isClick={false} setText={setSearch} />
 
         <CustomText text="Available Tests" style={styles.sectionTitle} />
 
         <FlatList
-          data={listData}
+          data={testData?.data}
           renderItem={renderTestItem}
           keyExtractor={(item, index) => index.toString()}
           numColumns={2}

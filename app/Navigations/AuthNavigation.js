@@ -6,6 +6,38 @@ import { SCREEN_COMPONENT, SCREEN_NAME } from '../Constant';
 
 const screen = [
   {
+    name: SCREEN_NAME.HomeTab,
+    component: SCREEN_COMPONENT.HomeTab,
+  },
+  {
+    name: SCREEN_NAME.Search,
+    component: SCREEN_COMPONENT.Search,
+  },
+  {
+    name: SCREEN_NAME.BloodGroupTest,
+    component: SCREEN_COMPONENT.BloodGroupTest,
+  },
+  {
+    name: SCREEN_NAME.ERecipt,
+    component: SCREEN_COMPONENT.ERecipt,
+  },
+  {
+    name: SCREEN_NAME.UploadSuccess,
+    component: SCREEN_COMPONENT.UploadSuccess,
+  },
+  {
+    name: SCREEN_NAME.PatientDetails,
+    component: SCREEN_COMPONENT.PatientDetails,
+  },
+  {
+    name: SCREEN_NAME.Payment,
+    component: SCREEN_COMPONENT.Payment,
+  },
+  {
+    name: SCREEN_NAME.OrderSuccess,
+    component: SCREEN_COMPONENT.OrderSuccess,
+  },
+  {
     name: SCREEN_NAME.Login,
     component: SCREEN_COMPONENT.LOGIN,
   },
@@ -21,18 +53,6 @@ const screen = [
   {
     name: SCREEN_NAME.Location,
     component: SCREEN_COMPONENT.Location,
-  },
-  {
-    name: SCREEN_NAME.HomeTab,
-    component: SCREEN_COMPONENT.HomeTab,
-  },
-  {
-    name: SCREEN_NAME.Search,
-    component: SCREEN_COMPONENT.Search,
-  },
-  {
-    name: SCREEN_NAME.BloodGroupTest,
-    component: SCREEN_COMPONENT.BloodGroupTest,
   },
 ];
 

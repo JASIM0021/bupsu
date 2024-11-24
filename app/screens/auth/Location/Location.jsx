@@ -36,6 +36,7 @@ const LocationScreen = () => {
 
   const handleLocationPermission = async () => {
     // Request location permission
+    // ShowAlertMsg.showError('Location not found');
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       setErrorMsg('Permission to access location was denied');
@@ -43,18 +44,18 @@ const LocationScreen = () => {
         'Permission Denied',
         'Enable location permission to continue.',
       );
-      return;
+      // return;
     }
 
     // Get the current location
     const currentLocation = await Location.getCurrentPositionAsync({});
     setLocation(currentLocation);
-
+    console.log('currentLocation', currentLocation);
     if (currentLocation) {
       // Alert.alert('Location Captured', `Latitude: ${currentLocation.coords.latitude}, Longitude: ${currentLocation.coords.longitude}`);
       console.log('Current Location:', currentLocation);
       navigation.push({
-        screen: SCREEN_NAME.Location,
+        screen: SCREEN_NAME.HomeTab,
         data: {},
       });
     } else {
@@ -90,7 +91,7 @@ const LocationScreen = () => {
           />
           <CustomText
             text="Give us permission to share your location so we can enhance your booking."
-            bold="1200"
+            bold="bold"
             size="sm"
             textAlign="center"
           />

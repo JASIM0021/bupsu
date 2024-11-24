@@ -23,6 +23,8 @@ import Header from '../../Components/header/Header';
 import CustomText from '../../Components/Text';
 import { responsiveHeight, responsiveWidth } from '../../themes';
 import useNavigationHelper from '../helper/NavigationHelper';
+import { useDispatch } from 'react-redux';
+import { savePatientDetails } from '../../features/slice/GlobalSlice';
 
 const PatientDetails = () => {
   const theme = useTheme();
@@ -30,6 +32,8 @@ const PatientDetails = () => {
 
   const [fullName, setFullName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
+  const [email, setEmail] = useState('');
+
   const [age, setAge] = useState('');
   const [sex, setSex] = useState('');
   const [serviceType, setServiceType] = useState('');
@@ -39,6 +43,7 @@ const PatientDetails = () => {
   const [prescription, setPrescription] = useState(null);
   const [errors, setErrors] = useState({});
 
+  const dispatch = useDispatch();
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -150,10 +155,15 @@ const PatientDetails = () => {
       newErrors.mobileNumber = 'Mobile Number is required';
     else if (!/^\d{10}$/.test(mobileNumber))
       newErrors.mobileNumber = 'Invalid Mobile Number';
+    if (!email.trim()) newErrors.email = 'Email  is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      newErrors.email = 'Invalid Email Address';
+    else if (!/^\d{10}$/.test(mobileNumber))
+      newErrors.mobileNumber = 'Invalid Mobile Number';
     if (!age.trim()) newErrors.age = 'Age is required';
     else if (isNaN(age) || parseInt(age) <= 0) newErrors.age = 'Invalid Age';
     if (!sex) newErrors.sex = 'Sex is required';
-    if (!service) newErrors.service = 'Service is required';
+    // if (!service) newErrors.service = 'Service is required';
     if (!pinCode.trim()) newErrors.pinCode = 'PIN Code is required';
     else if (!/^\d{6}$/.test(pinCode)) newErrors.pinCode = 'Invalid PIN Code';
     if (!address.trim()) newErrors.address = 'Address is required';
@@ -166,7 +176,19 @@ const PatientDetails = () => {
   const handleContinue = () => {
     if (validateForm()) {
       // Handle form submission
-      console.log('Form submitted');
+
+      const patientDetails = {
+        name: fullName,
+        email: email,
+        contactNumber: mobileNumber,
+        age: Number(age),
+        sex: sex,
+
+        pinCode: pinCode,
+        address: address,
+      };
+
+      dispatch(savePatientDetails(patientDetails));
       navigation.push({
         screen: 'Payment',
         data: {},
@@ -212,6 +234,16 @@ const PatientDetails = () => {
         )}
 
         <TextInput
+          label="Email"
+          value={email}
+          onChangeText={setEmail}
+          style={styles.input}
+          mode="outlined"
+          error={!!errors.email}
+        />
+        {errors.email && <HelperText type="error">{errors.email}</HelperText>}
+
+        <TextInput
           label="Age"
           value={age}
           onChangeText={setAge}
@@ -224,30 +256,30 @@ const PatientDetails = () => {
 
         <View style={styles.sexContainer}>
           <Button
-            mode={sex === 'Male' ? 'contained' : 'outlined'}
-            onPress={() => setSex('Male')}
+            mode={sex === 'MALE' ? 'contained' : 'outlined'}
+            onPress={() => setSex('MALE')}
             style={styles.sexButton}
           >
-            Male
+            MALE
           </Button>
           <Button
-            mode={sex === 'Female' ? 'contained' : 'outlined'}
-            onPress={() => setSex('Female')}
+            mode={sex === 'FEMALE' ? 'contained' : 'outlined'}
+            onPress={() => setSex('FEMALE')}
             style={styles.sexButton}
           >
-            Female
+            FEMALE
           </Button>
           <Button
-            mode={sex === 'Other' ? 'contained' : 'outlined'}
-            onPress={() => setSex('Other')}
+            mode={sex === 'OTHER' ? 'contained' : 'outlined'}
+            onPress={() => setSex('OTHER')}
             style={styles.sexButton}
           >
-            Other
+            OTHER
           </Button>
         </View>
         {errors.sex && <HelperText type="error">{errors.sex}</HelperText>}
 
-        <View style={styles.serviceContainer}>
+        {/* <View style={styles.serviceContainer}>
           <Dropdown
             style={[
               styles.dropdown,
@@ -272,7 +304,7 @@ const PatientDetails = () => {
           {errors.service && (
             <HelperText type="error">{errors.service}</HelperText>
           )}
-        </View>
+        </View> */}
 
         <TextInput
           label="PIN Code"

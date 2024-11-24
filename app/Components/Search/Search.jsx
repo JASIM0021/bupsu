@@ -12,15 +12,16 @@ import { useTheme } from 'react-native-paper';
 import useNavigationHelper from '../../screens/helper/NavigationHelper';
 import { SCREEN_NAME } from '../../Constant';
 
-const Search = ({ isClick = true, onTextChange }) => {
+const Search = ({ isClick = true, setText }) => {
   const theme = useTheme();
   const [searchText, setSearchText] = useState('');
   const [debouncedSearchText, setDebouncedSearchText] = useState(searchText);
 
+  console.log('searchText', searchText);
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearchText(searchText);
-      onTextChange(searchText);
+      setText(searchText);
     }, 2000);
 
     return () => {
@@ -30,7 +31,7 @@ const Search = ({ isClick = true, onTextChange }) => {
 
   useEffect(() => {
     if (debouncedSearchText) {
-      console.log('Debounced searchText:', debouncedSearchText);
+      // console.log('Debounced searchText:', debouncedSearchText);
     }
   }, [debouncedSearchText]);
 
@@ -74,7 +75,10 @@ const Search = ({ isClick = true, onTextChange }) => {
           style={styles.icon}
         />
         <TextInput
-          onTextInput={text => setSearchText(text)}
+          value={searchText} // Added value prop
+          onChangeText={text => {
+            setSearchText(text);
+          }}
           onPressIn={
             isClick
               ? () => {
@@ -98,9 +102,6 @@ const Search = ({ isClick = true, onTextChange }) => {
           ]}
           placeholder="Search Test, Organization or Diagnosis"
           placeholderTextColor={theme.colors.primary}
-          onChangeText={text => {
-            setSearchText(text);
-          }}
         />
       </View>
     </View>

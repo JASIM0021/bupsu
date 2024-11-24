@@ -37,6 +37,23 @@ const screen = [
     name: SCREEN_NAME.OrderSuccess,
     component: SCREEN_COMPONENT.OrderSuccess,
   },
+  {
+    name: SCREEN_NAME.Login,
+    component: SCREEN_COMPONENT.LOGIN,
+  },
+
+  {
+    name: SCREEN_NAME.Splash,
+    component: SCREEN_COMPONENT.Splash,
+  },
+  {
+    name: SCREEN_NAME.OTPScreen,
+    component: SCREEN_COMPONENT.OTPScreen,
+  },
+  {
+    name: SCREEN_NAME.Location,
+    component: SCREEN_COMPONENT.Location,
+  },
 ];
 
 const HomeNavigation = ({ route }) => {

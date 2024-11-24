@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   FlatList,
   Image,
@@ -20,7 +26,7 @@ import CustomText from '../../../../Components/Text';
 import CustomCards from '../../../../Components/Cards/CustomCards';
 import { responsiveHeight, responsiveWidth } from '../../../../themes';
 import GolbalStyle from '../../../../Style';
-import { useTheme } from 'react-native-paper';
+import { ActivityIndicator, useTheme } from 'react-native-paper';
 import ImageConstant from '../../../../Constant/ImageConstant';
 import Swiper from 'react-native-swiper';
 import BookCard from '../../../../Components/BookCard/BookCard';
@@ -29,13 +35,32 @@ import ActionSheet from 'react-native-actions-sheet';
 import { useSelector } from 'react-redux';
 import useNavigationHelper from '../../../helper/NavigationHelper';
 import { SCREEN_NAME } from '../../../../Constant';
+import { useGetAllAddressQuery } from '../../../../features/api/address/address.api';
+import { useGetServiceResultQuery } from '../../../../features/api/service/medecalService';
+import Loader from '../../../../Components/Loader/Loader';
 
 const HomeTab = () => {
   const theme = useTheme();
+  const { data, isLoading, isError, error } = useGetAllAddressQuery();
   const colorSchem = useColorScheme();
   const [selectedCategory, setSelectedCategory] = React.useState(new Set());
   const [isActionSheetVisible, setActionSheetVisible] = React.useState(false);
   const { location } = useSelector(state => state.globalReducer);
+  const [queryParams, setQueryParams] = useState([
+    {
+      name: 'serviceCoverAreaAddress',
+      value: location?.name,
+    },
+  ]);
+  const {
+    data: allservices,
+    isLoading: servicesLoading,
+    refetch,
+  } = useGetServiceResultQuery({
+    queryParams,
+  });
+
+  console.log('allservices', allservices);
   console.log('location', location);
   const actionSheetRef = useRef(null);
   const openActionSheet = () => {
@@ -47,9 +72,9 @@ const HomeTab = () => {
     setActionSheetVisible(false);
   };
 
-  useMemo(() => {
-    actionSheetRef.current?.hide();
-  }, [location?.dustrict]);
+  // useMemo(() => {
+
+  // }, [location?.name]);
   const pan = useRef(new Animated.ValueXY()).current;
 
   const panResponder = useRef(
@@ -127,6 +152,24 @@ const HomeTab = () => {
       borderTopLeftRadius: 10,
       borderTopRightRadius: 10,
     },
+    loadingContainer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(255,255,255,0.7)',
+      zIndex: 999,
+    },
+    noDataContainer: {
+      // flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 20,
+      // backgroundColor: 'red',
+    },
   });
 
   const images = [
@@ -192,8 +235,55 @@ const HomeTab = () => {
     },
   ];
 
+  useEffect(() => {
+    setQueryParams([
+      {
+        name: 'serviceCoverAreaAddress',
+        value: location?.name,
+      },
+    ]);
+    actionSheetRef.current?.hide();
+    closeActionSheet();
+  }, [location?.name]);
+
+  useEffect(() => {
+    if (!location?.name) {
+      actionSheetRef.current?.show();
+    }
+  }, []);
+
+  const handleServiceNavigation = data => {
+    console.log('data?.navigationScreen', data?.navigationScreen);
+    switch (data?.navigationScreen) {
+      // case '':
+      case 'e_health_call':
+        if (Platform.OS === 'android') {
+          Linking.openURL(`tel:${data?.serviceContactNumber}`);
+          return;
+        }
+
+        if (Platform.OS === 'ios') {
+          Linking.openURL(`telprompt:${data?.phoneNumber}`);
+          return;
+        }
+        break;
+      case 'patient_details':
+        navigation.push({
+          screen: 'PatientDetails',
+          data: {},
+        });
+        break;
+      default:
+        navigation.push({
+          screen: SCREEN_NAME.BloodGroupTest,
+          data: {},
+        });
+    }
+  };
   return (
     <View style={styles.container}>
+      <Loader isLoading={isLoading || servicesLoading} />
+
       <Header isBack={false} isShop={true} isPhone={true} />
       <View style={{ paddingHorizontal: 16 }}>
         <View style={[GolbalStyle.row]}>
@@ -207,7 +297,7 @@ const HomeTab = () => {
             <View style={[GolbalStyle.row]}>
               <Image source={ImageConstant.location} />
               <CustomText
-                text={location?.district}
+                text={location?.name}
                 size="sm"
                 bold="bold"
                 underline
@@ -253,62 +343,39 @@ const HomeTab = () => {
 
           {/* CARD */}
           <View style={[GolbalStyle.mtSM]}>
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{
-                columnGap: 20,
-                height: '100%',
-                // flex: 1,
-              }}
-              data={serviceArr}
-              horizontal={true}
-              renderItem={({ item }) => {
-                return (
-                  <BookCard
-                    onPress={item.onPress}
-                    title={item.name}
-                    subTitle={item.subTitle}
-                    number={item.number}
-                  />
-                );
-              }}
-            />
+            {allservices?.data?.length > 0 ? (
+              <FlatList
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{
+                  columnGap: 20,
+                  height: '100%',
+                }}
+                data={allservices?.data}
+                horizontal={true}
+                renderItem={({ item }) => {
+                  return (
+                    <BookCard
+                      onPress={() => handleServiceNavigation(item)}
+                      title={item?.serviceName}
+                      subTitle={item?.description}
+                      number={item?.navigationScreen == 'e_health_call'}
+                    />
+                  );
+                }}
+              />
+            ) : (
+              <View style={styles.noDataContainer}>
+                <CustomText
+                  text="No services available in your area"
+                  color={theme.colors.primary}
+                  size="lg"
+                  textAlign="center"
+                />
+              </View>
+            )}
           </View>
         </ScrollView>
       </View>
-      {/* View cart section
-      <Animated.View
-        {...panResponder.panHandlers}
-        style={[
-          styles.cartSection,
-          {
-            transform: [{ translateY: pan.y }],
-          },
-        ]}
-      >
-        <TouchableOpacity>
-          <View style={[GolbalStyle.row]}>
-            <CustomText text={`1 Test | `} bold="bold" />
-            <CustomText text={`Select`} />
-            <Image
-              source={ImageConstant.down_arrow}
-              style={GolbalStyle.icon_sm}
-            />
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={{
-            height: responsiveHeight / 2,
-            backgroundColor: theme.colors.primary,
-            padding: 10,
-            paddingHorizontal: 30,
-            borderRadius: 10,
-          }}
-        >
-          <CustomText text="View Cart" bold="bold" color="white" />
-        </TouchableOpacity>
-      </Animated.View> */}
       <ActionSheet ref={actionSheetRef}>
         <View style={[GolbalStyle.column, { height: responsiveHeight * 4 }]}>
           <AutocompleteDistricts />

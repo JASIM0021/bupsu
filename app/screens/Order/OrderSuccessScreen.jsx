@@ -67,7 +67,9 @@ const OrderSuccessScreen = () => {
   };
 
   const handleBackToHome = () => {
-    navigation.navigate('Home');
+    navigation.push({
+      screen: 'HomeTab',
+    });
   };
 
   return (

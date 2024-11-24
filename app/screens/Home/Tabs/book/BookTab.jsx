@@ -20,10 +20,14 @@ import {
 import useNavigationHelper from '../../../helper/NavigationHelper';
 import { SCREEN_NAME } from '../../../../Constant';
 import ImageConstant from '../../../../Constant/ImageConstant';
+import { useGetMyAppointmentQuery } from '../../../../features/api/appontment/appointment.api';
+import Loader from '../../../../Components/Loader/Loader';
 
 const BookTab = () => {
   const navigation = useNavigationHelper();
   const theme = useTheme();
+
+  const { isLoading, data, isError, error } = useGetMyAppointmentQuery();
 
   const styles = StyleSheet.create({
     container: {
@@ -109,7 +113,7 @@ const BookTab = () => {
       onPress={() => {
         navigation.push({
           screen: SCREEN_NAME.ERecipt,
-          data: {},
+          data: item,
         });
       }}
     >
@@ -122,14 +126,14 @@ const BookTab = () => {
           />
         </View>
         <View style={styles.textContainer}>
-          <CustomText style={styles.name} text={item.name} />
+          <CustomText style={styles.name} text={item?.patientInfo?.name} />
           <CustomText
             style={styles.description}
-            text={`Test: ${item.description}`}
+            text={`Test: ${item?.medicalTestLists?.[0]?.testName}`}
           />
           <CustomText
             style={styles.address}
-            text={`Address: ${item.address}`}
+            text={`Address: ${item?.patientInfo?.address}`}
             numberOfLines={2}
           />
         </View>
@@ -142,13 +146,14 @@ const BookTab = () => {
 
   return (
     <View style={styles.container}>
+      <Loader isLoading={isLoading} />
       <Header isBack={false} title="E-Appointment" />
       <Divider />
       <FlatList
         contentContainerStyle={[styles.listContainer, styles.content]}
-        data={listData}
+        data={data?.data}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item?._id}
       />
     </View>
   );

@@ -7,11 +7,19 @@ const GlobalSlice = createSlice({
     user: null,
     loader: false,
     error: null,
-    location: {
-      district: '',
-      latitude: '',
-      longitude: '',
+    patientDetails: {
+      name: '',
+      email: '',
+      contactNumber: '',
+      age: 18,
+      sex: '',
+
+      pinCode: '',
+      address: '',
     },
+    selectedTest: {},
+    location: {},
+
     products: [
       {
         id: 1242352,
@@ -24,6 +32,14 @@ const GlobalSlice = createSlice({
   reducers: {
     saveLocation: (state, action) => {
       state.location = action.payload;
+    },
+
+    savePatientDetails: (state, action) => {
+      state.patientDetails = action.payload;
+    },
+
+    saveSelectedTest: (state, action) => {
+      state.selectedTest = action.payload;
     },
 
     saveUser: (state, action) => {
@@ -64,5 +80,7 @@ export const {
   productFetchSuccess,
   startLoading,
   stopLoading,
+  savePatientDetails,
+  saveSelectedTest,
 } = GlobalSlice.actions;
 export default GlobalSlice.reducer;

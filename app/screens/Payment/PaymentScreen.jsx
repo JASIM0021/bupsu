@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -13,6 +13,10 @@ import SwipeButton from 'rn-swipe-button';
 import ConfirmationModal from '../../Components/Modal/ConfirmationModal';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useNavigationHelper from '../helper/NavigationHelper';
+import { useSelector } from 'react-redux';
+import { useCreateAppointmentMutation } from '../../features/api/appontment/appointment.api';
+import { SCREEN_NAME } from '../../Constant';
+import Loader from '../../Components/Loader/Loader';
 
 const PaymentScreen = () => {
   const theme = useTheme();
@@ -20,6 +24,12 @@ const PaymentScreen = () => {
   const [paymentMethod, setPaymentMethod] = useState('cashOnDelivery');
   const [modalVisible, setModalVisible] = useState(false);
   const confirmInputRef = useRef(null);
+  const [createAppionment, { data, isLoading, isError, isSuccess, error }] =
+    useCreateAppointmentMutation();
+
+  const { patientDetails, selectedTest } = useSelector(
+    state => state?.globalReducer,
+  );
 
   const styles = StyleSheet.create({
     container: {
@@ -67,10 +77,37 @@ const PaymentScreen = () => {
   };
 
   const handleOrderComplete = () => {
+    console.log(' patientDetails, selectedTest ', patientDetails, selectedTest);
+
     setModalVisible(false);
-    navigation.push({
-      screen: 'OrderSuccess',
-    });
+
+    let formData = new FormData();
+
+    let data = {
+      organization: selectedTest?.organization,
+      paymentStatus: 'PAID',
+      paymentType: 'CASH',
+      review: 'Excellent service.',
+      patientInfo: { ...patientDetails },
+      medicalTestLists: [
+        {
+          testCode: selectedTest?.testCode,
+          testName: selectedTest?.testName,
+          sample: selectedTest?.sample,
+          mrp: selectedTest?.mrp,
+          organizationName: selectedTest?.organizationName,
+          organizationCode: selectedTest?.organizationCode,
+          appointmentTiming: selectedTest?.organizationTiming[0],
+        }, // Use the modified selectedTest without _id
+      ],
+    };
+    formData.append('data', JSON.stringify(data)); // Convert data to JSON string and append to formData
+
+    createAppionment(formData);
+
+    // navigation.push({
+    //   screen: 'OrderSuccess',
+    // });
     // Alert.alert('Success', 'Your order has been placed successfully!');
     // Navigate to order confirmation or home screen
     // navigation.navigate('OrderConfirmation');
@@ -80,8 +117,24 @@ const PaymentScreen = () => {
     setPaymentMethod(value);
   };
 
+  useEffect(() => {
+    if (isSuccess) {
+      Alert.alert('Success', 'Order placed successfully');
+      navigation.push({
+        screen: SCREEN_NAME.OrderSuccess,
+      });
+    }
+
+    if (isError) {
+      // handle error
+      // Alert.alert('Error', 'Server Error');
+      console.log('error', error);
+    }
+  }, [isSuccess, isError, isLoading]);
+
   return (
     <View style={styles.container}>
+      <Loader isLoading={isLoading} />
       <Header isBack={true} title="Payment" />
       <ScrollView contentContainerStyle={styles.content}>
         <RadioButton.Group
